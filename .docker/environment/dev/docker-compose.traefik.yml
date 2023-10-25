@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  database:
+    ports:
+      - ${PORT_DATABASE}:3306
+    labels:
+      - traefik.enable=false
+
+  web:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.maisonjaune_https.tls=true
+      - traefik.http.routers.maisonjaune_https.rule=Host(`maisonjaune.local`)
+      - traefik.http.routers.maisonjaune_https.entryPoints=websecure
+
+  phpmyadmin:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.maisonjaune_phpmyadmin.tls=true
+      - traefik.http.routers.maisonjaune_phpmyadmin.rule=Host(`phpmyadmin.maisonjaune.local`)
+      - traefik.http.routers.maisonjaune_phpmyadmin.entryPoints=websecure
+
+  node:
+    command: npm run watch
+
+  smtp:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.maisonjaune_maildev.tls=true
+      - traefik.http.routers.maisonjaune_maildev.rule=Host(`maildev.maisonjaune.local`)
+      - traefik.http.routers.maisonjaune_maildev.entryPoints=websecure
+      - traefik.http.services.maisonjaune_maildev.loadbalancer.server.port=1080
+
+  traefik:
+    image: traefik:v2.3
+    ports:
+      - ${PORT_HTTP}:80
+      - ${PORT_HTTPS}:443
+      - 8080:8080
+    volumes:
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ./services/traefik/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - ./services/traefik/certs:/etc/certs/:ro
+      - ./services/traefik/confs:/etc/traefik/confs/:ro
