@@ -1,0 +1,55 @@
+# REGISTRATION
+
+fos_user_security_login:
+  path: /connexion
+  methods: GET|POST
+  controller: "fos_user.security.controller::loginAction"
+
+fos_user_security_check:
+  path: /connexion/verification
+  methods: POST
+  controller: "fos_user.security.controller::checkAction"
+
+fos_user_security_logout:
+  path: /deconnexion
+  methods: GET|POST
+  controller: "fos_user.security.controller::logoutAction"
+
+# PROFILE
+
+fos_user_profile_show:
+  path: /profil
+  methods: GET
+  controller: "fos_user.profile.controller::showAction"
+
+fos_user_profile_edit:
+  path: /profil/editer
+  methods: GET|POST
+  controller: "fos_user.profile.controller::editAction"
+
+fos_user_change_password:
+  path: /profil/mot-de-passe
+  methods: GET|POST
+  controller: "fos_user.change_password.controller::changePasswordAction"
+
+# RESETTING
+
+fos_user_resetting_request:
+  path: /reinitialisation
+  methods: GET
+  controller: "fos_user.resetting.controller::requestAction"
+
+fos_user_resetting_send_email:
+  path: /reinitialisation/email/envoi
+  methods: POST
+  controller: "fos_user.resetting.controller::sendEmailAction"
+
+fos_user_resetting_check_email:
+  path: /reinitialisation/email/check
+  methods: GET
+  controller: "fos_user.resetting.controller::checkEmailAction"
+
+fos_user_resetting_reset:
+  path: /reinitialisation/token/{token}
+  methods: GET|POST
+  controller: "fos_user.resetting.controller::resetAction"
