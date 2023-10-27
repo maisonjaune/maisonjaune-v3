@@ -1,0 +1,14 @@
+<div class="card mb-3 {{ data.backgroundColor }} {{ data.textColor }}">
+    <div class="card-body">
+        <h3 class="card-title {{ data.textColor }}">{{ data.title }}</h3>
+
+        <div class="d-flex align-items-center">
+            <div class="flex-grow-1 fs-1">
+                {{ data.stat }}
+            </div>
+            <div class="flex-shrink-0">
+                <i class="fa {{ data.iconClass }} fa-3x"></i>
+            </div>
+        </div>
+    </div>
+</div>

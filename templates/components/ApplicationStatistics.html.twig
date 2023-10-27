@@ -1,0 +1,9 @@
+<div{{ attributes }}>
+    <div class="row">
+        {% for block in blocks %}
+            <div class="col-3">
+                {% include "components/.block-statistic.html.twig" with { data: block } only %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
