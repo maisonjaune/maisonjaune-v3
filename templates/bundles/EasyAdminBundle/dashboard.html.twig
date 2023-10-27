@@ -3,5 +3,14 @@
 {% block content_title %}Dashboard{% endblock %}
 
 {% block main %}
-
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col">
+                <div class="mb-3">
+                    {{ component('ServerInformations') }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

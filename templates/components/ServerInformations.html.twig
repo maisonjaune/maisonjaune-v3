@@ -1,0 +1,49 @@
+<div{{ attributes }}>
+    {% embed "components/.card.html.twig" %}
+        {% block card_header %}
+            {% trans %}Server Informations{% endtrans %}
+        {% endblock %}
+
+        {% block card_body %}
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <th class="text-nowrap">
+                        <i class="fa fa-tasks fa-fw"></i>
+                        {% trans %}Disk Space{% endtrans %}
+                    </th>
+                    <td class="w-100 text-right">
+                        {{ this.diskAvailableSpace }} / {{ this.diskTotalSpace }}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-nowrap">
+                        <i class="fa fa-tasks fa-fw"></i>
+                        {% trans %}Disk Space (%){% endtrans %}
+                    </th>
+                    <td class="w-100 text-right">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped {{ this.progressbarBackgroundColor }}"
+                                 role="progressbar"
+                                 style="width: {{ this.percentAvailableSpace }}%;"
+                                 aria-valuenow="{{ this.percentAvailableSpace | round(1) }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">{{ this.percentAvailableSpace | round(1) }}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="text-nowrap">
+                        <i class="fa fa-database fa-fw"></i>
+                        {% trans %}Database Space{% endtrans %}
+                    </th>
+                    <td class="w-100 text-right">
+                        {{ this.databaseUsedSpace }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        {% endblock %}
+    {% endembed %}
+</div>
