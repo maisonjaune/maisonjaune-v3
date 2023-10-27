@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin\Node;
 
+use App\Admin\Field\EditorJsField;
 use App\Entity\Node\Category;
 use App\Entity\Node\Post;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -11,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
@@ -41,7 +41,7 @@ class PostCrudController extends AbstractCrudController
         yield TextareaField::new('excerpt')
             ->onlyOnForms();
 
-        yield TextEditorField::new('content')
+        yield EditorJsField::new('content')
             ->onlyOnForms();
 
         yield FormField::addColumn(4);
