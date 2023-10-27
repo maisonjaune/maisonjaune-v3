@@ -26,6 +26,9 @@ class Post extends Node implements Reviewable, Decoratable
     #[ORM\Column]
     private bool $decorated = false;
 
+    /**
+     * @var Collection<int, Category>
+     */
     #[ORM\ManyToMany(targetEntity: Category::class)]
     private Collection $categories;
 
@@ -64,7 +67,7 @@ class Post extends Node implements Reviewable, Decoratable
         return $this->decorated;
     }
 
-    public function setDecorated(bool $decorated): Decoratable
+    public function setDecorated(bool $decorated): self
     {
         $this->decorated = $decorated;
 

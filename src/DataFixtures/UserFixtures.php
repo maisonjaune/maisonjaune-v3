@@ -21,17 +21,17 @@ class UserFixtures extends AppFixtures
 
             if ($entity instanceof User) {
                 $entity
-                    ->setUsername($data['username'])
-                    ->setEmail($data['email'])
-                    ->setFirstname($data['firstname'])
-                    ->setLastname($data['lastname'])
+                    ->setUsername((string) $data['username'])
+                    ->setEmail((string) $data['email'])
+                    ->setFirstname((string) $data['firstname'])
+                    ->setLastname((string) $data['lastname'])
                     ->setPlainPassword('azerty')
-                    ->setEnabled($data['enabled'])
-                    ->setAdmin($data['admin'])
-                    ->setSuperAdmin($data['super_admin']);
+                    ->setEnabled(!!$data['enabled'])
+                    ->setAdmin(!!$data['admin'])
+                    ->setSuperAdmin(!!$data['super_admin']);
             }
 
-            $this->setReference($data['username'], $entity);
+            $this->setReference((string) $data['username'], $entity);
 
             $this->userManager->updateUser($entity);
         }
@@ -39,6 +39,9 @@ class UserFixtures extends AppFixtures
         $manager->flush();
     }
 
+    /**
+     * @return array<array<string, bool|string|null>>
+     */
     private function getData(): array
     {
         return [

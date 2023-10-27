@@ -4,5 +4,5 @@ namespace App\Converter;
 
 interface ByteConverterInterface
 {
-    public function convert(int $bytes): string;
+    public function convert(float $bytes): string;
 }

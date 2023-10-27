@@ -6,11 +6,17 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 
 abstract class AppFixtures extends Fixture
 {
-    protected function parseEditorJs(array $blocks): string
+    /**
+     * @param array<int, array<string, mixed>> $blocks
+     * @return string
+     */
+    protected function parseEditorJs(array $blocks): ?string
     {
-        return json_encode([
+        $json = json_encode([
             'time' => strtotime('now'),
             'blocks' => $blocks,
         ]);
+
+        return !!$json ? $json : null;
     }
 }

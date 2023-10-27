@@ -4,41 +4,41 @@ namespace App\DataFixtures\Node\Brief;
 
 use App\DataFixtures\AppFixtures;
 use App\DataFixtures\Node\CategoryFixtures;
+use App\DataFixtures\Node\NodeFixtures;
 use App\DataFixtures\UserFixtures;
+use App\Entity\Node;
 use App\Entity\Node\Brief;
+use App\Entity\Node\Category;
+use App\Entity\User;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class BriefNewsFixtures extends AppFixtures implements DependentFixtureInterface
+class BriefNewsFixtures extends NodeFixtures implements DependentFixtureInterface
 {
-    public function load(ObjectManager $manager)
+    protected function createEntity(array $data): Node
     {
-        foreach ($this->getData() as $data) {
-            $entity = new Brief();
+        $entity = new Brief();
 
-            $entity
-                ->setTitle($data['title'])
-                ->setSlug($data['slug'])
-                ->setContent($data['content'])
-                ->setDraft($data['draft'])
-                ->setActif($data['actif'])
-                ->setSticky($data['sticky'])
-                ->setCommentable($data['commentable'])
-                ->setPublishedAt($data['publishedAt'] ?? null)
-                ->addCategory($this->getReference('News'))
-                ->setAuthor($this->getReference($data['author']));
+        $category = $this->getReference('News');
 
-            $this->setReference($data['slug'], $entity);
-
-            $manager->persist($entity);
+        if ($category instanceof Category) {
+            $entity->addCategory($category);
         }
 
-        $manager->flush();
+        if (is_string($data['author'])) {
+            $author = $this->getReference($data['author']);
+
+            if ($author instanceof User) {
+                $entity->setAuthor($author);
+            }
+        }
+
+        return $entity;
     }
 
-    private function getData(): array
+    protected function getData(): array
     {
         return [
             [

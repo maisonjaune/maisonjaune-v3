@@ -2,78 +2,80 @@
 
 namespace App\Service\ServerInformations;
 
-use App\Converter\ByteConverterInterface;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
+use Exception;
 
 class ServerInformationsProvider implements ServerInformationsProviderInterface
 {
-    private $disk_free_space;
+    private ?float $diskFreeSpace = null;
 
-    private $disk_total_space;
+    private ?float $diskTotalSpace = null;
 
-    private $percent_available_space;
+    private ?float $percentAvailableSpace = null;
 
-    private $bdd_used_space;
+    private ?float $bddUsedSpace = null;
 
     public function __construct(
-        private Connection             $connection,
-        private ByteConverterInterface $byteConverter
+        private Connection $connection,
     )
     {
     }
 
-    public function getAvailableSpace()
+    public function getAvailableSpace(): float
     {
-        if (null === $this->disk_free_space) {
-            $this->disk_free_space = disk_free_space('/');
+        if (null === $this->diskFreeSpace) {
+            $value = disk_free_space('/');
+            $this->diskFreeSpace = !!$value ? $value : 0;
         }
 
-        return $this->byteConverter->convert($this->disk_free_space);
+        return $this->diskFreeSpace;
     }
 
     /**
      * @throws Exception
      */
-    public function getDatabaseUsedSpace()
+    public function getDatabaseUsedSpace(): float
     {
-        if (null === $this->bdd_used_space) {
+        if (null === $this->bddUsedSpace) {
             $stmt = $this->connection->prepare("SHOW TABLE STATUS");
             $resultSet = $stmt->executeQuery();
-            $this->bdd_used_space = 0;
+            $this->bddUsedSpace = 0;
 
-            foreach ($resultSet as $row) {
-                $this->bdd_used_space += $row["Data_length"] + $row["Index_length"];
+            foreach ($resultSet->fetchAllAssociative() as $row) {
+                $this->bddUsedSpace += $row["Data_length"] + $row["Index_length"];
             }
         }
 
-        return $this->byteConverter->convert($this->bdd_used_space);
+        return $this->bddUsedSpace;
     }
 
-    public function getTotalSpace()
+    public function getTotalSpace(): float
     {
-        if (null === $this->disk_total_space) {
-            $this->disk_total_space = disk_total_space('/');
+        if (null === $this->diskTotalSpace) {
+            $value = disk_total_space('/');
+            $this->diskTotalSpace = !!$value ? $value : 0;
         }
 
-        return $this->byteConverter->convert($this->disk_total_space);
+        return $this->diskTotalSpace;
     }
 
-    public function getPercentAvailableSpace()
+    public function getPercentAvailableSpace(): float
     {
-        if (null === $this->percent_available_space) {
+        if (null === $this->percentAvailableSpace) {
 
-            if (null === $this->disk_free_space) {
-                $this->disk_free_space = disk_free_space('/');
+            if (null === $this->diskFreeSpace) {
+                $value = disk_free_space('/');
+                $this->diskFreeSpace = !!$value ? $value : 0;
             }
 
-            if (null === $this->disk_total_space) {
-                $this->disk_total_space = disk_total_space('/');
+            if (null === $this->diskTotalSpace) {
+                $value = disk_total_space('/');
+                $this->diskTotalSpace = !!$value ? $value : 0;
             }
 
-            $this->percent_available_space = ($this->disk_free_space * 100) / $this->disk_total_space;
+            $this->percentAvailableSpace = ($this->diskFreeSpace * 100) / $this->diskTotalSpace;
         }
 
-        return $this->percent_available_space;
+        return $this->percentAvailableSpace;
     }
 }
