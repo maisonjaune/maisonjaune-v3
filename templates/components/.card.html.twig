@@ -1,0 +1,18 @@
+<div class="{{ ['card'] | merge(card_classes is defined ? card_classes : []) | join(' ') }}" {% block card_attributes %}{% endblock %}>
+    {% if block("card_header") is defined %}
+        <div class="{{ ['card-header'] | merge(card_header_classes is defined ? card_header_classes : []) | join(' ') }}">
+            {{ block('card_header') }}
+        </div>
+    {% endif %}
+
+    <div class="{{ ['card-body'] | merge(card_body_classes is defined ? card_body_classes : []) | join(' ') }}">
+        {{ block('card_body') }}
+    </div>
+
+    {% if block("card_footer") is defined %}
+        <div class="{{ ['card-footer'] | merge(card_footer_classes is defined ? card_footer_classes : []) | join(' ') }}">
+            {{ block('card_footer') }}
+        </div>
+    {% endif %}
+</div>
+

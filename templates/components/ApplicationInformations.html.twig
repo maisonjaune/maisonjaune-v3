@@ -1,0 +1,46 @@
+<div{{ attributes }}>
+    {% embed "components/.card.html.twig" %}
+        {% block card_header %}
+            {% trans %}Application Informations{% endtrans %}
+        {% endblock %}
+
+        {% block card_body %}
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <th class="text-nowrap">
+                            {% trans %}PHP Version{% endtrans %}
+                        </th>
+                        <td class="w-100 text-right">
+                            {{ this.phpVersion }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-nowrap">
+                            {% trans %}Symfony{% endtrans %}
+                        </th>
+                        <td class="w-100 text-right">
+                            {{ this.symfonyVersion }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-nowrap">
+                            {% trans %}End of maintenance{% endtrans %}
+                        </th>
+                        <td class="w-100 text-right">
+                            {{ this.endOfMaintenance }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-nowrap">
+                            {% trans %}End of life{% endtrans %}
+                        </th>
+                        <td class="w-100 text-right">
+                            {{ this.endOfLife }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endblock %}
+    {% endembed %}
+</div>
