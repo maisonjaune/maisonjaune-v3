@@ -2,6 +2,10 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Node\Brief;
+use App\Entity\Node\Category;
+use App\Entity\Node\Page;
+use App\Entity\Node\Post;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -38,5 +42,11 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
 
         yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
+
+        yield MenuItem::section('Blog');
+        yield MenuItem::linkToCrud('Posts', 'fa fa-newspaper', Post::class);
+        yield MenuItem::linkToCrud('Briefs', 'fa fa-newspaper', Brief::class);
+        yield MenuItem::linkToCrud('Pages', 'fa fa-newspaper', Page::class);
+        yield MenuItem::linkToCrud('Categories', 'fa fa-folder', Category::class);
     }
 }
