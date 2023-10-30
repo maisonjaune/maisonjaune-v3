@@ -4,15 +4,12 @@ namespace App\Repository\Node;
 
 use App\Entity\Node\Post;
 use App\Repository\NodeRepository;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\QueryException;
 
 /**
- * @extends ServiceEntityRepository<Post>
+ * @extends NodeRepository<Post>
  *
  * @method Post|null find($id, $lockMode = null, $lockVersion = null)
  * @method Post|null findOneBy(array $criteria, array $orderBy = null)
@@ -24,6 +21,7 @@ class PostRepository extends NodeRepository
     /**
      * @param Criteria|null $criteria
      * @return Post[]
+     * @throws Exception
      * @throws QueryException
      */
     public function findMain(Criteria $criteria = null): array
@@ -37,12 +35,19 @@ class PostRepository extends NodeRepository
             $query->addCriteria($criteria);
         }
 
-        return $query->getQuery()->getResult();
+        $data = $query->getQuery()->getResult();
+
+        if (!is_array($data)) {
+           throw new Exception('Error');
+        }
+
+        return $data;
     }
 
     /**
      * @param Criteria|null $criteria
      * @return Post[]
+     * @throws Exception
      * @throws QueryException
      */
     public function findLastSticky(?Criteria $criteria = null): array
@@ -56,7 +61,13 @@ class PostRepository extends NodeRepository
             $query->addCriteria($criteria);
         }
 
-        return $query->getQuery()->getResult();
+        $data = $query->getQuery()->getResult();
+
+        if (!is_array($data)) {
+            throw new Exception('Error');
+        }
+
+        return $data;
     }
 
     protected function getNodeClass(): string

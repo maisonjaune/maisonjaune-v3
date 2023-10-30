@@ -9,7 +9,7 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class ApplicationStatistics
 {
     public function __construct(
-        #[TaggedIterator('app.block.statistic')] public $blocks,
+        #[TaggedIterator('app.block.statistic')] public \IteratorAggregate $blocks,
     )
     {
     }

@@ -6,6 +6,7 @@
 parameters:
     mailer_user_address: '%env(MAILER_USER_ADDRESS)%'
     mailer_user_name: '%env(MAILER_USER_NAME)%'
+    command.init.folder: []
 
 services:
     # default configuration for services in *this* file

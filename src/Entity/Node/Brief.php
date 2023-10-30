@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "node_brief")]
 class Brief extends Node
 {
+    /**
+     * @var Collection<int, Category>
+     */
     #[ORM\ManyToMany(targetEntity: Category::class)]
     private Collection $categories;
 

@@ -8,7 +8,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class CategoryFixtures extends AppFixtures
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $news = (new Category())
             ->setName('News')

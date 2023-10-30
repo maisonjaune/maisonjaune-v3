@@ -9,7 +9,9 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Node>
+ * @template T of Node
+ * @extends ServiceEntityRepository<T|Node>
+ * @template-extends ServiceEntityRepository<T|Node>
  *
  * @method Node|null find($id, $lockMode = null, $lockVersion = null)
  * @method Node|null findOneBy(array $criteria, array $orderBy = null)
@@ -23,7 +25,7 @@ class NodeRepository extends ServiceEntityRepository
         parent::__construct($registry, $this->getNodeClass());
     }
 
-    public function add(Node $entity, bool $flush = false): void
+    public function save(Node $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -41,7 +43,7 @@ class NodeRepository extends ServiceEntityRepository
         }
     }
 
-    public function getQueryEntityPublish($alias): QueryBuilder
+    public function getQueryEntityPublish(string $alias): QueryBuilder
     {
         return $this->createQueryBuilder($alias)
             ->where("{$alias}.actif = 1")
@@ -52,12 +54,15 @@ class NodeRepository extends ServiceEntityRepository
 
     public function countAll(): int
     {
-        return $this->createQueryBuilder('n')
+        return (int) $this->createQueryBuilder('n')
             ->select('COUNT(n)')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return class-string<T|Node>
+     */
     protected function getNodeClass(): string
     {
         return Node::class;

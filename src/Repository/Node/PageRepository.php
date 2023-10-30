@@ -4,10 +4,9 @@ namespace App\Repository\Node;
 
 use App\Entity\Node\Page;
 use App\Repository\NodeRepository;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
- * @extends ServiceEntityRepository<Page>
+ * @extends NodeRepository<Page>
  *
  * @method Page|null find($id, $lockMode = null, $lockVersion = null)
  * @method Page|null findOneBy(array $criteria, array $orderBy = null)

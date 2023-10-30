@@ -8,22 +8,22 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent(template: 'components/ApplicationInformations.html.twig')]
 final class ApplicationInformations
 {
-    public function getPhpVersion()
+    public function getPhpVersion(): string
     {
         return PHP_VERSION;
     }
 
-    public function getSymfonyVersion()
+    public function getSymfonyVersion(): string
     {
         return Kernel::VERSION;
     }
 
-    public function getEndOfMaintenance()
+    public function getEndOfMaintenance(): string
     {
         return Kernel::END_OF_MAINTENANCE;
     }
 
-    public function getEndOfLife()
+    public function getEndOfLife(): string
     {
         return Kernel::END_OF_LIFE;
     }

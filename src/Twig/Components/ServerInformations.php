@@ -2,6 +2,7 @@
 
 namespace App\Twig\Components;
 
+use App\Converter\ByteConverterInterface;
 use App\Service\ServerInformations\ServerInformationsProviderInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -9,27 +10,28 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class ServerInformations
 {
     public function __construct(
-        private ServerInformationsProviderInterface $serverInformationsProvider
+        private ServerInformationsProviderInterface $serverInformationsProvider,
+        private ByteConverterInterface              $byteConverter,
     )
     {
     }
 
-    public function getDiskAvailableSpace()
+    public function getDiskAvailableSpace(): string
     {
-        return $this->serverInformationsProvider->getAvailableSpace();
+        return $this->byteConverter->convert($this->serverInformationsProvider->getAvailableSpace());
     }
 
-    public function getDiskTotalSpace()
+    public function getDiskTotalSpace(): string
     {
-        return $this->serverInformationsProvider->getTotalSpace();
+        return $this->byteConverter->convert($this->serverInformationsProvider->getTotalSpace());
     }
 
-    public function getPercentAvailableSpace()
+    public function getPercentAvailableSpace(): float
     {
         return $this->serverInformationsProvider->getPercentAvailableSpace();
     }
 
-    public function getProgressbarBackgroundColor()
+    public function getProgressbarBackgroundColor(): string
     {
         if ($this->serverInformationsProvider->getPercentAvailableSpace() > 90) {
             return 'progress-bar-danger';
@@ -42,8 +44,8 @@ final class ServerInformations
         return 'progress-bar-info';
     }
 
-    public function getDatabaseUsedSpace()
+    public function getDatabaseUsedSpace(): string
     {
-        return $this->serverInformationsProvider->getDatabaseUsedSpace();
+        return $this->byteConverter->convert($this->serverInformationsProvider->getDatabaseUsedSpace());
     }
 }

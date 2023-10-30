@@ -4,13 +4,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use FOS\UserBundle\Model\UserManagerInterface;
+use RuntimeException;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -48,21 +48,42 @@ class UserCrudController extends AbstractCrudController
             ->hideOnForm();
     }
 
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): User
     {
-        return $this->userManager->createUser();
+        $user = $this->userManager->createUser();
+
+        if (!$user instanceof User) {
+            throw new RuntimeException('User must be an instance of ' . User::class);
+        }
+
+        return $user;
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param User $entityInstance
+     * @return void
+     */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         $this->userManager->updateUser($entityInstance);
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param User $entityInstance
+     * @return void
+     */
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         $this->userManager->updateUser($entityInstance);
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param User $entityInstance
+     * @return void
+     */
     public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         $this->userManager->deleteUser($entityInstance);

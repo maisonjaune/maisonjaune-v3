@@ -4,7 +4,7 @@ namespace App\Converter;
 
 class ByteConverter implements ByteConverterInterface
 {
-    public function convert(int $bytes): string
+    public function convert(float $bytes): string
     {
         if ($bytes <= 0) {
             return '0 Octet';

@@ -4,11 +4,11 @@ namespace App\Service\ServerInformations;
 
 interface ServerInformationsProviderInterface
 {
-    public function getAvailableSpace();
+    public function getAvailableSpace(): float;
 
-    public function getDatabaseUsedSpace();
+    public function getDatabaseUsedSpace(): float;
 
-    public function getTotalSpace();
+    public function getTotalSpace(): float;
 
-    public function getPercentAvailableSpace();
+    public function getPercentAvailableSpace(): float;
 }
