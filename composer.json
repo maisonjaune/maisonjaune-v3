@@ -83,7 +83,8 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "phpstan": "vendor/bin/phpstan analyse src"
     },
     "conflict": {
         "symfony/symfony": "*"
