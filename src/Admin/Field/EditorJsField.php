@@ -15,8 +15,6 @@ class EditorJsField implements FieldInterface
         return (new self())
             ->setProperty($propertyName)
             ->setLabel($label)
-            ->setFormType(EditorJsType::class)
-            ->addWebpackEncoreEntries('admin-field-editorjs')
-            ->addFormTheme('@EasyAdmin/form/editorjs.html.twig');
+            ->setFormType(EditorJsType::class);
     }
 }

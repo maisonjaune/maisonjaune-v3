@@ -1,0 +1,51 @@
+{% extends ea.templatePath('crud/edit') %}
+
+{% block content_title %}
+    {%- apply spaceless -%}
+        {% trans %}Review Post{% endtrans %}
+    {%- endapply -%}
+{% endblock %}
+
+{% block page_actions %}
+    <button class="btn btn-primary action-save" type="submit" form="post-form">
+        <span class="btn-label"><span class="action-label">{% trans %}Review Post{% endtrans %}</span></span>
+    </button>
+{% endblock %}
+
+{% block main %}
+    {{ form_start(edit_form, { attr: { id: 'post-form' }}) }}
+
+    <div class="row">
+        {% embed "@EasyAdmin/form/column.html.twig" with { col: 12 } %}
+            {% block column_body %}
+                {{ form_row(edit_form.title) }}
+            {% endblock %}
+        {% endembed %}
+    </div>
+
+    <div class="row">
+        {% embed "@EasyAdmin/form/column.html.twig" with { col: 8 } %}
+            {% block column_body %}
+                {% embed "@EasyAdmin/form/fieldset.html.twig" %}
+                    {% block fieldset_body %}
+                        {{ form_row(edit_form.excerpt) }}
+                        {{ form_row(edit_form.content) }}
+                    {% endblock %}
+                {% endembed %}
+            {% endblock %}
+        {% endembed %}
+
+        {% embed "@EasyAdmin/form/column.html.twig" with { col: 4 } %}
+            {% block column_body %}
+                {% embed "@EasyAdmin/form/fieldset.html.twig" %}
+                    {% block fieldset_body %}
+                        {{ form_row(edit_form.slug) }}
+                    {% endblock %}
+                {% endembed %}
+            {% endblock %}
+        {% endembed %}
+    </div>
+
+    {{ form_rest(edit_form) }}
+    {{ form_end(edit_form) }}
+{% endblock %}
