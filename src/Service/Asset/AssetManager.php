@@ -4,8 +4,14 @@ namespace App\Service\Asset;
 
 class AssetManager implements AssetManagerInterface
 {
+    /**
+     * @var string[]
+     */
     private array $webpackEntries = [];
 
+    /**
+     * @return string[]
+     */
     public function getWebpackEntries(): array
     {
         return $this->webpackEntries;

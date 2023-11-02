@@ -17,4 +17,5 @@ enum PostPlace: string
     case UNPUBLISHED = 'UnPublished';
 
     case PUBLISHED = 'Published';
+
 }

@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Service\Asset\AssetManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\AssetDto;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
@@ -20,7 +21,11 @@ class AdminAssetManagerSubscriber implements EventSubscriberInterface
     public function onAfterCrudActionEvent(AfterCrudActionEvent $event): void
     {
         foreach ($this->assetManager->getWebpackEntries() as $entry) {
-            $this->contextProvider->getContext()->getAssets()->addWebpackEncoreAsset(new AssetDto($entry));
+            $context = $this->contextProvider->getContext();
+
+            if ($context instanceof AdminContext) {
+                $context->getAssets()->addWebpackEncoreAsset(new AssetDto($entry));
+            }
         }
     }
 

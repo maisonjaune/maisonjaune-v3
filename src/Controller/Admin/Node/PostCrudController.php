@@ -23,16 +23,19 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Workflow\WorkflowInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use RuntimeException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class PostCrudController extends AbstractCrudController
 {
     public function __construct(
-        private WorkflowInterface $postWorkflow,
+        private WorkflowInterface        $postWorkflow,
         private EventDispatcherInterface $eventDispatcher,
-        private EntityManagerInterface $entityManager,
+        private EntityManagerInterface   $entityManager,
+        private AdminUrlGenerator        $adminUrlGenerator,
     )
     {
     }
@@ -50,7 +53,7 @@ class PostCrudController extends AbstractCrudController
             if (in_array($enumTransition, PostTransition::getIndexActions())) {
                 $action = Action::new($enumTransition->getActionName(), $enumTransition->getActionLabel(), $enumTransition->getActionIcon())
                     ->linkToCrudAction($enumTransition->getActionName())
-                    ->addCssClass($enumTransition->getCssClass())
+                    ->addCssClass($enumTransition->getCssClass() ?? '')
                     ->displayIf(fn(Post $entity) => $this->postWorkflow->can($entity, $enumTransition->value));
 
                 $actions->add(Crud::PAGE_INDEX, $action);
@@ -107,27 +110,27 @@ class PostCrudController extends AbstractCrudController
             ->onlyOnForms();
     }
 
-    public function review(AdminContext $context)
+    public function review(AdminContext $context): Response
     {
         return $this->runAction($context, PostTransition::REVIEW);
     }
 
-    public function decorate(AdminContext $context)
+    public function decorate(AdminContext $context): Response
     {
         return $this->runAction($context, PostTransition::DECORATE);
     }
 
-    public function publish(AdminContext $context)
+    public function publish(AdminContext $context): Response
     {
         return $this->runAction($context, PostTransition::PUBLISH);
     }
 
-    public function unpublish(AdminContext $context)
+    public function unpublish(AdminContext $context): Response
     {
         return $this->runAction($context, PostTransition::UNPUBLISH);
     }
 
-    private function runAction(AdminContext $context, PostTransition $transition)
+    private function runAction(AdminContext $context, PostTransition $transition): Response
     {
         $entity = $context->getEntity()->getInstance();
 
@@ -151,7 +154,11 @@ class PostCrudController extends AbstractCrudController
             $this->entityManager->persist($entity);
             $this->entityManager->flush();
 
-            return $this->redirect($context->getReferrer());
+            $url = $context->getReferrer() ?? $this->adminUrlGenerator
+                ->setAction(Action::INDEX)
+                ->generateUrl();
+
+            return $this->redirect($url);
         }
 
         $event = new AfterCrudActionEvent($context, KeyValueStore::new());

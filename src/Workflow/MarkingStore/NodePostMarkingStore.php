@@ -3,7 +3,12 @@
 namespace App\Workflow\MarkingStore;
 
 use App\Entity\Node\Post;
+use App\Model\Decoratable;
+use App\Model\Draftable;
+use App\Model\Publiable;
+use App\Model\Reviewable;
 use App\Workflow\Place\PostPlace;
+use DateTimeImmutable;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
@@ -56,6 +61,41 @@ class NodePostMarkingStore implements MarkingStoreInterface
      */
     public function setMarking(object $subject, Marking $marking, array $context = [])
     {
-        // TODO: Implement setMarking() method.
+        foreach (array_keys($marking->getPlaces()) as $place) {
+            $placeEnum = PostPlace::from($place);
+
+            switch ($placeEnum) {
+                case PostPlace::IN_DRAFT :
+                    if ($subject instanceof Draftable) {
+                        $subject->setDraft(true);
+                    }
+                    break;
+                case PostPlace::WROTE :
+                    if ($subject instanceof Draftable) {
+                        $subject->setDraft(false);
+                    }
+                    break;
+                case PostPlace::REVIEWED :
+                    if ($subject instanceof Reviewable) {
+                        $subject->setReviewed(true);
+                    }
+                    break;
+                case PostPlace::DECORATED :
+                    if ($subject instanceof Decoratable) {
+                        $subject->setDecorated(true);
+                    }
+                    break;
+                case PostPlace::PUBLISHED :
+                    if ($subject instanceof Publiable) {
+                        $subject->setPublishedAt($subject->getPublishedAt() ?? new DateTimeImmutable());
+                    }
+                    break;
+                case PostPlace::UNPUBLISHED :
+                    if ($subject instanceof Publiable) {
+                        $subject->setPublishedAt(null);
+                    }
+                    break;
+            }
+        }
     }
 }

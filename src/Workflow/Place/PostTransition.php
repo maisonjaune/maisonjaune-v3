@@ -16,6 +16,9 @@ enum PostTransition: string
 
     case UNPUBLISH = 'Unpublish';
 
+    /**
+     * @return PostTransition[]
+     */
     public static function getIndexActions(): array
     {
         return [
