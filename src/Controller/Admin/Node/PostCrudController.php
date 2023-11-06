@@ -47,6 +47,8 @@ class PostCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+
         foreach ($this->postWorkflow->getDefinition()->getTransitions() as $transition) {
             $enumTransition = PostTransition::from($transition->getName());
 
@@ -110,6 +112,11 @@ class PostCrudController extends AbstractCrudController
             ->onlyOnForms();
     }
 
+    public function write(AdminContext $context): Response
+    {
+        return $this->runAction($context, PostTransition::WRITE);
+    }
+
     public function review(AdminContext $context): Response
     {
         return $this->runAction($context, PostTransition::REVIEW);
@@ -149,6 +156,9 @@ class PostCrudController extends AbstractCrudController
         $form->handleRequest($context->getRequest());
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $transition = PostTransition::from($context->getRequest()->request->get('transition', $transition->value));
+
             $this->postWorkflow->apply($entity, $transition->value);
 
             $this->entityManager->persist($entity);
@@ -164,7 +174,7 @@ class PostCrudController extends AbstractCrudController
         $event = new AfterCrudActionEvent($context, KeyValueStore::new());
         $this->eventDispatcher->dispatch($event);
 
-        return $this->render(sprintf('@EasyAdmin/node/post/%s.html.twig', strtolower($transition->value)), [
+        return $this->render(sprintf('@EasyAdmin/node/post/%s.html.twig', $transition->getAdminView()), [
             'edit_form' => $form,
             'entity' => $context->getEntity(),
         ]);

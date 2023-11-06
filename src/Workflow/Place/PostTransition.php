@@ -4,6 +4,8 @@ namespace App\Workflow\Place;
 
 enum PostTransition: string
 {
+    case INITIALISATION = 'Initialisation';
+
     case DRAFT = 'Draft';
 
     case WRITE = 'Write';
@@ -22,6 +24,7 @@ enum PostTransition: string
     public static function getIndexActions(): array
     {
         return [
+            self::WRITE,
             self::DECORATE,
             self::REVIEW,
             self::PUBLISH,
@@ -37,8 +40,8 @@ enum PostTransition: string
     public function getActionLabel(): string
     {
         return match ($this) {
-            self::DRAFT => 'Save as draft',
-            self::WRITE => 'Save',
+            self::DRAFT => 'Draft',
+            self::WRITE => 'Write',
             self::DECORATE => 'Decorate',
             self::REVIEW => 'Review',
             self::PUBLISH => 'Publish',
@@ -49,6 +52,7 @@ enum PostTransition: string
     public function getActionIcon(): ?string
     {
         return match ($this) {
+            self::DRAFT, self::WRITE => 'fa fa-pen',
             self::DECORATE => 'fa fa-camera',
             self::REVIEW => 'fa fa-wrench',
             self::PUBLISH => 'fa fa-check',
@@ -62,6 +66,14 @@ enum PostTransition: string
         return match ($this) {
             self::UNPUBLISH => 'text-danger',
             default => '',
+        };
+    }
+
+    public function getAdminView(): string
+    {
+        return match ($this) {
+            self::DRAFT => strtolower(self::WRITE->value),
+            default => strtolower($this->value),
         };
     }
 }

@@ -16,8 +16,11 @@ framework:
         - UnPublished
         - Published
       transitions:
-        Draft:
+        Initialisation:
           from: [ Initialisation ]
+          to: In draft
+        Draft:
+          from: [ In draft ]
           to: In draft
         Write:
           from: [ In draft ]

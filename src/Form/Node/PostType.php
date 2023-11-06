@@ -2,9 +2,11 @@
 
 namespace App\Form\Node;
 
+use App\Entity\Node\Category;
 use App\Entity\Node\Post;
 use App\Form\EditorJsType;
 use App\Workflow\Place\PostTransition;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,7 +30,12 @@ class PostType extends AbstractType
                 ->add('slug')
                 ->add('excerpt')
                 ->add('content', EditorJsType::class)
-                ->add('draft');
+                ->add('categories', EntityType::class, [
+                    'class' => Category::class,
+                    'choice_label' => 'name',
+                    'multiple' => true,
+                    'expanded' => true,
+                ]);
         }
 
         if ($transition === PostTransition::REVIEW->getActionName()) {
