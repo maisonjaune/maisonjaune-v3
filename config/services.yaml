@@ -7,6 +7,9 @@ parameters:
     mailer_user_address: '%env(MAILER_USER_ADDRESS)%'
     mailer_user_name: '%env(MAILER_USER_NAME)%'
     command.init.folder: []
+    matomo.base_url: 'https://analytics.maisonjaune.org'
+    matomo.auth_token: '%env(MATOMO_AUTH_TOKEN)%'
+    matomo.id_site: '%env(MATOMO_ID_SITE)%'
 
 services:
     # default configuration for services in *this* file
@@ -26,3 +29,7 @@ services:
     App\Service\Statistics\Counter\UserCounterStatistic:
         tags:
             - { name: app.block.statistic }
+
+    App\Service\Analytics\Analytics:
+        calls:
+            - [setAdapter, ['@App\Service\Analytics\Adapter\MatomoAnalytics']]
