@@ -7,6 +7,7 @@ use App\Entity\Node\Category;
 use App\Entity\Node\Page;
 use App\Entity\Node\Post;
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -20,6 +21,12 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         return $this->render('@EasyAdmin/dashboard.html.twig');
+    }
+
+    public function configureAssets(): Assets
+    {
+        return Assets::new()
+            ->addWebpackEncoreEntry('admin');
     }
 
     public function configureCrud(): Crud

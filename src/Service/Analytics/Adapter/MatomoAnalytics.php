@@ -72,8 +72,8 @@ class MatomoAnalytics implements AnalyticsAdapterInterface
         foreach ($data as $date => $value) {
             $datetime = new DateTimeImmutable($date);
 
-            $this->data[self::KEY_VISITS]->add(new Visit($datetime, (int) ($value['nb_visits'] ?? 0)));
-            $this->data[self::KEY_UNIQUE_VISITS]->add(new Visit($datetime, (int) ($value['nb_uniq_visitors'] ?? 0)));
+            $this->data[self::KEY_VISITS]->add(new Visit($datetime, (int)($value['nb_visits'] ?? 0)));
+            $this->data[self::KEY_UNIQUE_VISITS]->add(new Visit($datetime, (int)($value['nb_uniq_visitors'] ?? 0)));
         }
     }
 
