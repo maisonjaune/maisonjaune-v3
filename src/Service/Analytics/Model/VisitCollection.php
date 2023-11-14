@@ -9,7 +9,7 @@ class VisitCollection
     /**
      * @var Visit[]
      */
-    public array $data;
+    public array $data = [];
 
     public function add(Visit $visit): self
     {

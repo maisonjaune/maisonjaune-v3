@@ -8,9 +8,15 @@ use App\Service\Analytics\Model\Visit;
 use App\Service\Analytics\Model\VisitCollection;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class MatomoAnalytics implements AnalyticsAdapterInterface
 {
+    private HttpClientInterface $client;
+
     /**
      * @var array<string, VisitCollection|null>
      */
@@ -29,6 +35,7 @@ class MatomoAnalytics implements AnalyticsAdapterInterface
         #[Autowire('%matomo.id_site%')] private int       $idSite,
     )
     {
+        $this->client = HttpClient::create();
     }
 
     public function getVisitsSummary(): VisitCollection
@@ -84,22 +91,23 @@ class MatomoAnalytics implements AnalyticsAdapterInterface
      */
     private function get(string $method, array $context = []): array
     {
-        $query = array_merge([
-            'module' => 'API',
-            'format' => 'JSON',
-            'token_auth' => $this->authToken,
-            'idSite' => $this->idSite,
-            'method' => $method,
-        ], $context);
+        $response = $this->client->request('GET', $this->baseUrl, [
+            'query' => array_merge([
+                'module' => 'API',
+                'format' => 'JSON',
+                'token_auth' => $this->authToken,
+                'idSite' => $this->idSite,
+                'method' => $method,
+            ], $context),
+            'timeout' => 5,
+        ]);
 
-        $fetched = file_get_contents(sprintf("%s?%s", $this->baseUrl, http_build_query($query)));
+        try {
+            $data = json_decode($response->getContent(), true);
 
-        if (false === $fetched) {
+            return is_array($data) ? $data : [];
+        } catch (TransportExceptionInterface|HttpExceptionInterface $exception) {
             throw new DataUnavailableException(sprintf('Unable to fetch data from %s', $this->baseUrl));
         }
-
-        $json = json_decode($fetched, true);
-
-        return is_array($json) ? $json : [];
     }
 }

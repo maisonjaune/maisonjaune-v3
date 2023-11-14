@@ -3,8 +3,10 @@
 namespace App\Twig\Components\Analytics;
 
 use App\Service\Analytics\AnalyticsInterface;
+use App\Service\Analytics\Exception\DataUnavailableException;
 use App\Service\Analytics\Model\VisitCollection;
 use DateTimeImmutable;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
@@ -25,17 +27,19 @@ final class VisitGraph
         private TranslatorInterface   $translator,
     )
     {
-        $this->visits = $this->analytics->getVisits();
-        $this->uniqueVisits = $this->analytics->getUniqueVisits();
+        $labels = [];
+        $datasets = [];
 
-        $this->chart = $this->chartBuilder->createChart(Chart::TYPE_LINE);
+        try {
+            $this->visits = $this->analytics->getVisits();
+            $this->uniqueVisits = $this->analytics->getUniqueVisits();
 
-        $this->chart->setData([
-            'labels' => array_map(
+            $labels = array_map(
                 fn(DateTimeImmutable $date) => $date->format('d/m/Y'),
                 $this->visits->getDates()
-            ),
-            'datasets' => [
+            );
+
+            $datasets = [
                 [
                     'label' => $this->translator->trans('Visitors'),
                     'backgroundColor' => '#3498db',
@@ -50,8 +54,18 @@ final class VisitGraph
                     'data' => $this->uniqueVisits->getValues(),
                     'tension' => 0.25,
                 ],
-            ],
+            ];
+
+        } catch (DataUnavailableException $e) {
+        }
+
+        $this->chart = $this->chartBuilder->createChart(Chart::TYPE_LINE);
+
+        $this->chart->setData([
+            'labels' => $labels,
+            'datasets' => $datasets,
         ]);
+
         $this->chart->setOptions([
             'maintainAspectRatio' => true,
         ]);
