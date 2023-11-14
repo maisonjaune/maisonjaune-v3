@@ -50,7 +50,11 @@ class PostType extends AbstractType
             $builder
                 ->add('sticky')
                 ->add('commentable')
-                ->add('publishedAt');
+                ->add('publishedAt', null, [
+                    'widget' => 'single_text',
+                    'html5' => false,
+                    'format' => 'yyyy-MM-dd kk:mm',
+                ]);
         }
     }
 

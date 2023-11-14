@@ -40,6 +40,7 @@ enum PostTransition: string
     public function getActionLabel(): string
     {
         return match ($this) {
+            self::INITIALISATION => 'Initialisation',
             self::DRAFT => 'Draft',
             self::WRITE => 'Write',
             self::DECORATE => 'Decorate',

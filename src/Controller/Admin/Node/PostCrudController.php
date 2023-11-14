@@ -134,7 +134,24 @@ class PostCrudController extends AbstractCrudController
 
     public function unpublish(AdminContext $context): Response
     {
-        return $this->runAction($context, PostTransition::UNPUBLISH);
+        $entity = $context->getEntity()->getInstance();
+
+        $transition = PostTransition::UNPUBLISH;
+
+        if (!$this->postWorkflow->can($entity, $transition->value)) {
+            throw $this->createAccessDeniedException(sprintf("Transition %s is not possible for post %s", $transition->value, $entity->getId()));
+        }
+
+        $this->postWorkflow->apply($entity, $transition->value);
+
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
+
+        $url = $context->getReferrer() ?? $this->adminUrlGenerator
+            ->setAction(Action::INDEX)
+            ->generateUrl();
+
+        return $this->redirect($url);
     }
 
     private function runAction(AdminContext $context, PostTransition $transition): Response
@@ -157,7 +174,7 @@ class PostCrudController extends AbstractCrudController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $transition = PostTransition::from($context->getRequest()->request->get('transition', $transition->value));
+            $transition = PostTransition::from($context->getRequest()->request->getString('transition', $transition->value));
 
             $this->postWorkflow->apply($entity, $transition->value);
 
