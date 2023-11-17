@@ -48,6 +48,13 @@ class PostCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+
+        $action = Action::new(PostTransition::INITIALISATION->getActionName(), PostTransition::INITIALISATION->getActionLabel(), PostTransition::INITIALISATION->getActionIcon())
+            ->linkToCrudAction(PostTransition::INITIALISATION->getActionName())
+            ->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $action);
 
         foreach ($this->postWorkflow->getDefinition()->getTransitions() as $transition) {
             $enumTransition = PostTransition::from($transition->getName());
@@ -93,7 +100,8 @@ class PostCrudController extends AbstractCrudController
         yield FormField::addFieldset();
 
         yield BooleanField::new('draft')
-            ->hideOnIndex();
+            ->renderAsSwitch(false)
+            ->hideOnForm();
 
         yield BooleanField::new('sticky')
             ->renderAsSwitch(false)
@@ -112,24 +120,33 @@ class PostCrudController extends AbstractCrudController
             ->onlyOnForms();
     }
 
+    public function initialisation(AdminContext $context): Response
+    {
+        return $this->runAction($context, PostTransition::INITIALISATION, new Post());
+    }
+
     public function write(AdminContext $context): Response
     {
-        return $this->runAction($context, PostTransition::WRITE);
+        $entity = $context->getEntity()->getInstance();
+        return $this->runAction($context, PostTransition::WRITE, $entity);
     }
 
     public function review(AdminContext $context): Response
     {
-        return $this->runAction($context, PostTransition::REVIEW);
+        $entity = $context->getEntity()->getInstance();
+        return $this->runAction($context, PostTransition::REVIEW, $entity);
     }
 
     public function decorate(AdminContext $context): Response
     {
-        return $this->runAction($context, PostTransition::DECORATE);
+        $entity = $context->getEntity()->getInstance();
+        return $this->runAction($context, PostTransition::DECORATE, $entity);
     }
 
     public function publish(AdminContext $context): Response
     {
-        return $this->runAction($context, PostTransition::PUBLISH);
+        $entity = $context->getEntity()->getInstance();
+        return $this->runAction($context, PostTransition::PUBLISH, $entity);
     }
 
     public function unpublish(AdminContext $context): Response
@@ -154,10 +171,8 @@ class PostCrudController extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    private function runAction(AdminContext $context, PostTransition $transition): Response
+    private function runAction(AdminContext $context, PostTransition $transition, Post $entity): Response
     {
-        $entity = $context->getEntity()->getInstance();
-
         if (!$entity instanceof Post) {
             throw new RuntimeException(sprintf("Entity must be instance of %s", Post::class));
         }

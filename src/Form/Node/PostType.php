@@ -24,7 +24,7 @@ class PostType extends AbstractType
     {
         $transition = $options['transition'];
 
-        if ($transition === PostTransition::WRITE->getActionName()) {
+        if (in_array($transition, array_map(fn(PostTransition $transition) => $transition->getActionName(), PostTransition::forRedaction()))) {
             $builder
                 ->add('title')
                 ->add('slug')
