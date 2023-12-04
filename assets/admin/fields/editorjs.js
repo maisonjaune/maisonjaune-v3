@@ -1,6 +1,7 @@
 import EditorJS from '@editorjs/editorjs';
 
 import './../../styles/editorjs.css';
+import ImageTool from './../../js/editorjs/plugins/image/image'
 
 document.querySelectorAll('[data-editor="editorjs"]').forEach((el) => {
 
@@ -9,6 +10,12 @@ document.querySelectorAll('[data-editor="editorjs"]').forEach((el) => {
     const editor = new EditorJS({
         holder: el,
         placeholder: 'Rédigez votre contenu ici !',
+
+        tools: {
+            image: {
+                class: ImageTool
+            },
+        },
 
         onChange: (api, event) => {
             editor.saver.save()
