@@ -1,0 +1,39 @@
+framework:
+  workflows:
+    post:
+      type: 'workflow'
+      marking_store:
+        service: App\Workflow\MarkingStore\NodePostMarkingStore
+      supports:
+        - App\Entity\Node\Post
+      initial_marking: Initialisation
+      places:
+        - Initialisation
+        - In draft
+        - Wrote
+        - Reviewed
+        - Decorated
+        - UnPublished
+        - Published
+      transitions:
+        Initialisation:
+          from: [ Initialisation ]
+          to: In draft
+        Draft:
+          from: [ In draft ]
+          to: In draft
+        Write:
+          from: [ In draft ]
+          to: Wrote
+        Decorate:
+          from: [ Wrote ]
+          to: Decorated
+        Review:
+          from: [ Wrote ]
+          to: Reviewed
+        Publish:
+          from: [ Reviewed, Decorated ]
+          to: Published
+        Unpublish:
+          from: [ Published ]
+          to: UnPublished

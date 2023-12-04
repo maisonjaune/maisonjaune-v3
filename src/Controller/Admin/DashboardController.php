@@ -7,6 +7,8 @@ use App\Entity\Node\Category;
 use App\Entity\Node\Page;
 use App\Entity\Node\Post;
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -32,9 +34,21 @@ class DashboardController extends AbstractDashboardController
     public function configureCrud(): Crud
     {
         return Crud::new()
+            ->addFormTheme('forms/editorjs.html.twig')
             ->renderContentMaximized()
             ->setDateFormat('dd/MM/yyyy')
             ->setDateTimeFormat('dd/MM/yyyy HH:mm:ss');
+    }
+
+    public function configureActions(): Actions
+    {
+        $actions = parent::configureActions();
+
+        $actions
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->setIcon('fa fa-pen'))
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->setIcon('fa fa-trash'));
+
+        return $actions;
     }
 
     public function configureDashboard(): Dashboard
