@@ -13,7 +13,8 @@ document.querySelectorAll('[data-editor="editorjs"]').forEach((el) => {
 
         tools: {
             image: {
-                class: ImageTool
+                class: ImageTool,
+                inlineToolbar: true,
             },
         },
 

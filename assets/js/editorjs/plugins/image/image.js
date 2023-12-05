@@ -29,12 +29,12 @@ export default class ImageTool {
         input.value = this.data && this.data.url ? this.data.url : '';
 
         input.addEventListener('paste', (event) => {
-            this._createImage(event.clipboardData.getData('text'));
+            this._createImage({
+                url: event.clipboardData.getData('text')
+            });
         });
 
         this.wrapper.appendChild(input);
-
-        console.log(this.wrapper);
 
         return this.wrapper;
     }
@@ -43,21 +43,21 @@ export default class ImageTool {
         console.log(blockContent);
 
         const image = blockContent.querySelector('img');
-        const caption = blockContent.querySelector('input');
+        const caption = blockContent.querySelector('[contenteditable]');
 
         return {
             url: image.src,
-            caption: caption.value
+            caption: caption.innerHTML || ''
         }
     }
 
     _createImage(data){
         const image = document.createElement('img');
-        const caption = document.createElement('input');
+        const caption = document.createElement('div');
 
         image.src = data.url;
-        caption.value = data.caption || '';
-        caption.placeholder = 'Caption...';
+        caption.contentEditable = true;
+        caption.innerHTML = data.caption || '';
 
         this.wrapper.innerHTML = '';
         this.wrapper.appendChild(image);
