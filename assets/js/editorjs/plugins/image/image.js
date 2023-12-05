@@ -1,16 +1,56 @@
+import {IconAddBorder, IconStretch, IconAddBackground, IconPicture} from '@codexteam/icons';
+
 import './image.css';
 
 export default class ImageTool {
 
-    constructor({data}) {
-        this.data = data;
+    constructor({data, api, config, block}) {
+        this.api = api;
+        this.block = block;
+
         this.wrapper = null;
+
+        this.data = {
+            url: data.url || '',
+            caption: data.caption || '',
+            withBorder: data.withBorder !== undefined ? data.withBorder : false,
+            withBackground: data.withBackground !== undefined ? data.withBackground : false,
+            stretched: data.stretched !== undefined ? data.stretched : false,
+        };
+
+        this.config = {
+            endpoints: config.endpoints || '',
+            actions: config.actions || [],
+        };
+
+        this.settings = [
+            {
+                name: 'withBorder',
+                icon: IconAddBorder,
+                title: 'With border',
+            },
+            {
+                name: 'stretched',
+                icon: IconStretch,
+                title: 'Stretch image',
+                action: (name) => {
+                    this.data[name] = !this.data[name];
+                    this.wrapper.classList.toggle(name, this.data[name]);
+                    this.block.stretched = this.data[name];
+                }
+            },
+            {
+                name: 'withBackground',
+                icon: IconAddBackground,
+                title: 'With background',
+            }
+        ];
     }
 
     static get toolbox() {
         return {
             title: 'Image',
-            icon: '<svg width="17" height="15" viewBox="0 0 336 276" xmlns="http://www.w3.org/2000/svg"><path d="M291 150V79c0-19-15-34-34-34H79c-19 0-34 15-34 34v42l67-44 81 72 56-29 42 30zm0 52l-43-30-56 30-81-67-66 39v23c0 19 15 34 34 34h178c17 0 31-13 34-29zM79 0h178c44 0 79 35 79 79v118c0 44-35 79-79 79H79c-44 0-79-35-79-79V79C0 35 35 0 79 0z"/></svg>'
+            icon: IconPicture
         };
     }
 
@@ -45,13 +85,30 @@ export default class ImageTool {
         const image = blockContent.querySelector('img');
         const caption = blockContent.querySelector('[contenteditable]');
 
-        return {
+        return Object.assign(this.data, {
             url: image.src,
             caption: caption.innerHTML || ''
-        }
+        });
     }
 
-    _createImage(data){
+    renderSettings() {
+        return this.settings
+            .concat(this.config.actions)
+            .map(setting => ({
+                icon: setting.icon,
+                label: this.api.i18n.t(setting.title),
+                name: setting.name,
+                toggle: true,
+                isActive: this.data[setting.name],
+                onActivate: () => {
+                    typeof setting.action === 'function'
+                        ? setting.action(setting.name)
+                        : this._toggleSettingAction(setting.name);
+                },
+            }));
+    }
+
+    _createImage(data) {
         const image = document.createElement('img');
         const caption = document.createElement('div');
 
@@ -62,5 +119,18 @@ export default class ImageTool {
         this.wrapper.innerHTML = '';
         this.wrapper.appendChild(image);
         this.wrapper.appendChild(caption);
+
+        this._acceptSettingsView();
+    }
+
+    _toggleSettingAction(setting) {
+        this.data[setting] = !this.data[setting];
+        this._acceptSettingsView();
+    }
+
+    _acceptSettingsView() {
+        this.settings.forEach(setting => {
+            this.wrapper.classList.toggle(setting.name, !!this.data[setting.name]);
+        });
     }
 }

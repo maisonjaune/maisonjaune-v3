@@ -23,3 +23,18 @@
     outline: none;
     font-size: 14px;
 }
+
+.simple-image.withBorder img {
+    border: 1px solid #e8e8eb;
+}
+
+.simple-image.withBackground {
+    background: #eff2f5;
+    padding: 10px;
+}
+
+.simple-image.withBackground img {
+    display: block;
+    max-width: 60%;
+    margin: 0 auto 15px;
+}
