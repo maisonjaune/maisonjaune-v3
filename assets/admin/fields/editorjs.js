@@ -15,6 +15,12 @@ document.querySelectorAll('[data-editor="editorjs"]').forEach((el) => {
             image: {
                 class: ImageTool,
                 inlineToolbar: true,
+                config: {
+                    endpoints: {
+                        byFile: '/editorjs/upload/image', // Your backend file uploader endpoint
+                        byUrl: '/editorjs/fetch/image', // Your endpoint that provides uploading by Url
+                    }
+                }
             },
         },
 
