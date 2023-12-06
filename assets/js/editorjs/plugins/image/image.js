@@ -47,6 +47,33 @@ export default class ImageTool {
         ];
     }
 
+    static get pasteConfig() {
+        return {
+            tags: ['IMG'],
+            files: {
+                mimeTypes: ['image/*'],
+                extensions: ['gif', 'jpg', 'png'] // You can specify extensions instead of mime-types
+            }
+        }
+    }
+
+    onPaste(event){
+        switch (event.type){
+            // ... case 'tag'
+            case 'file':
+                /* We need to read file here as base64 string */
+                const file = event.detail.file;
+                const reader = new FileReader();
+
+                reader.onload = (loadEvent) => {
+                    this._createImage(loadEvent.target.result);
+                };
+
+                reader.readAsDataURL(file);
+                break;
+        }
+    }
+
     static get toolbox() {
         return {
             title: 'Image',
